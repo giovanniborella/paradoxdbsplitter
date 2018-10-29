@@ -9,11 +9,11 @@ def main(argv):
   try:
     opts, args = getopt.getopt(argv,"hi:o:c:x",["ifile=","ofile=","headers=","headershelp="])
   except getopt.GetoptError:
-    print 'paradoxdbsplitter.py -i <inputfile> -o <outputfile>'
+    print ('paradoxdbsplitter.py -i <inputfile> -o <outputfile>')
     sys.exit(2)
   for opt, arg in opts:
     if opt == '-h':
-       print 'paradoxdbsplitter.py -i <inputfile> -o <outputfile> -c <headers(hola,adios,pepe)>'
+       print ('paradoxdbsplitter.py -i <inputfile> -o <outputfile> -c <headers(hola,adios,pepe)>')
        sys.exit()
     elif opt in ("-x", "--helpheaders"):
       headershelp = 1
@@ -23,6 +23,7 @@ def main(argv):
        outputfile = arg
     elif opt in ("-c", "--headers"):
        cabeceras = arg.split(",")
+       print(cabeceras)
 
     # elif opt in ("-b", "--block"):
     #    bloque = arg
@@ -31,43 +32,51 @@ def main(argv):
   table = Table(inputfile)
 
   if 'headershelp' in locals():
-    print(table[0])
-    sys.exit()
+    fields = table.fields
+    headers = []
+    for f in fields:
+      headers.append(f)
+    #print(headers)
+    cabeceras = headers
+    #sys.exit()
 
   registros = len(table)
-  print "Dimension filas tabla: %s." % registros
-  print "Cantidad de registros por fichero: %d." % bloque
-  print "Cabeceras que se van a usar: %s." % cabeceras
-  print "Ruta del archivo: %s." % inputfile
+  print ("Table rows: %s" % registros)
+  print ("Rows per file: %d" % bloque)
+  print ("File headers to be extracted: %s" % cabeceras)
+  print ("File (db) path: %s" % inputfile)
 
-  print registros
-  print bloque
-  print registros/bloque
-  print math.ceil(registros/bloque)
+  #print (registros)
+  #print (bloque)
+  #print (registros/bloque)
+  #print (math.ceil(registros/bloque))
 
   iteraciones = int(math.ceil(registros/bloque))
 
-  print "Ficheros que se van a generar: %s." % iteraciones
+  print ("File parts about to generate: %s" % iteraciones)
 
   iteracion = 0
 
   for iteracion in range(0, iteraciones):
 
-    print "iteracion numero %s" % iteracion
-    with open(outputfile+"_parte_"+str(iteracion)+".csv", "wb") as csvfile:
+    print ("iteracion numero %s" % iteracion)
+    with open(outputfile+"_parte_"+str(iteracion)+".csv", "w") as csvfile:
+      print(csvfile)
 
-        spamwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        # headers
-        spamwriter.writerow(cabeceras)
-	start = iteracion * bloque
-	end = start + bloque
-        if end > registros:
-          end = registros
+      spamwriter = csv.writer(csvfile, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+      # headers
+      spamwriter.writerow(cabeceras)
+      start = iteracion * bloque
+      end = start + bloque
+      if end > registros:
+        end = registros
 
-        for row in range(start, end):
+      for row in range(start, end):
 
-          #print start
-          spamwriter.writerow([table[row][s].encode('utf8') if type(table[row][s]) is unicode else table[row][s] for s in cabeceras])
+        #print start
+        # FIX encoding here
+        # spamwriter.writerow([table[row][s].encode('utf8') if type(table[row][s]) is unicode else table[row][s] for s in cabeceras])
+        spamwriter.writerow(table[row][s] for s in cabeceras)
 
 if __name__ == "__main__":
    main(sys.argv[1:])

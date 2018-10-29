@@ -23,4 +23,8 @@ This script allows you to input a paradox db file and output serveral files in C
 - (i) inputfile : paradobx db file
 - (o) outputfile : namespace for the splitted files
 - (c) headers : headers for the incoming db
-- (x) headers help
+- (x) headers : output EVERY header from table
+
+## Batch
+
+run the nifty `foreachInFolder <folder>` to dump all .DB's out into csv's in same folder

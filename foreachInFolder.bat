@@ -1,0 +1,1 @@
+for %%f in (%1\*.DB) do paradoxdbsplitter.py -i ^"%%f^" -o ^"%%f^" -x
